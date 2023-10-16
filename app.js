@@ -41,9 +41,12 @@ async function getAccessToken() {
 }
 
 app.get("/", (req, res) => {
-  res.send("MPESA DARAJA API");
   var timeStamp = moment().format("YYYYMMDDHHmmss");
   console.log("This is a timestamp",timeStamp);
+   res.json({
+     message: "An Mpesa API",
+     timestamp: timeStamp
+   });
 });
 
 //ACCESS TOKEN ROUTE
@@ -72,19 +75,21 @@ app.get("/stkpush", (req, res) => {
           timestamp
       ).toString("base64");
 
+      const shortCode = process.env.DARAJA_SHORTCODE;
+      const callback_uri = process.env.DARAJA_CALLBACK_URI
       axios
         .post(
           url,
           {
-            BusinessShortCode: process.env.DARAJA_SHORTCODE,
+            BusinessShortCode: ,
             Password: password,
             Timestamp: timestamp,
             TransactionType: "CustomerBuyGoodsOnline",
             Amount: "1",
             PartyA: "254799273498",
-            PartyB: process.env.DARAJA_SHORTCODE,
+            PartyB: shortCode,
             PhoneNumber: "254799273498",
-            CallBackURL: process.env.DARAJA_CALLBACK_URI,
+            CallBackURL: callback_uri,
             AccountReference: "UMESKIA PAY",
             TransactionDesc: "Mpesa Daraja API stk push test",
           },
@@ -96,11 +101,14 @@ app.get("/stkpush", (req, res) => {
         )
         .then((response) => {
           console.log(response)
-          res.send("😀 Request is successful done ✔✔. Please enter mpesa pin to complete the transaction");
+          res.send("😀 Request is successful done ✔✔. Please enter mpesa pin to complete the transaction" + response);
         })
         .catch((error) => {
           console.log(error);
-          res.status(500).send("❌ Request failed", error);
+          res.status(500).json({
+            message: "❌ Request failed",
+            error: error
+          });
         });
     })
     .catch(console.log);
@@ -116,10 +124,10 @@ app.get("/registerurl", (req, resp) => {
         .post(
           url,
           {
-            ShortCode: process.env.DARAJA_SHORTCODE,
+            ShortCode: "4062753",
             ResponseType: "Complete",
-            ConfirmationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com/confirmation",
-            ValidationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com/validation",
+            ConfirmationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com",
+            ValidationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com",
           },
           {
             headers: {
@@ -132,7 +140,10 @@ app.get("/registerurl", (req, resp) => {
         })
         .catch((error) => {
           console.log(error);
-          resp.status(500).send("❌ Request failed");
+          resp.status(500).json({
+            message: "❌ Request failed",
+            error:  error
+          });
         });
     })
     .catch(console.log);
@@ -140,12 +151,17 @@ app.get("/registerurl", (req, resp) => {
 
 app.get("/confirmation", (req, res) => {
   console.log("All transaction will be sent to this URL");
-  res.send()
+  res.json({
+    message: "Confirmed URI"
+  })
   console.log(req.body);
 });
 
 app.get("/validation", (req, resp) => {
   console.log("Validating payment");
+    resp.json({
+    message: "Validated URI"
+  })
   console.log(req.body);
 });
 
@@ -182,7 +198,7 @@ app.get("/b2curlrequest", (req, res) => {
         })
         .catch((error) => {
           console.log(error);
-          res.status(500).send("❌ Request failed");
+          res.status(500).send("❌ Request failed" + error);
         });
     })
     .catch(console.log);
