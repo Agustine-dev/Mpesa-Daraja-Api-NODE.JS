@@ -76,12 +76,12 @@ app.get("/stkpush", (req, res) => {
       ).toString("base64");
 
       const shortCode = process.env.DARAJA_SHORTCODE;
-      const callback_uri = process.env.DARAJA_CALLBACK_URI
+      const callback_uri = process.env.DARAJA_CALLBACK_URI;
       axios
         .post(
           url,
           {
-            BusinessShortCode: shortCode,
+            BusinessShortCode: "4062753",
             Password: password,
             Timestamp: timestamp,
             TransactionType: "CustomerBuyGoodsOnline",
