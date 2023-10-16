@@ -81,7 +81,7 @@ app.get("/stkpush", (req, res) => {
         .post(
           url,
           {
-            BusinessShortCode: ,
+            BusinessShortCode: shortCode,
             Password: password,
             Timestamp: timestamp,
             TransactionType: "CustomerBuyGoodsOnline",
