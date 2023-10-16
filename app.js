@@ -92,7 +92,8 @@ app.get("/stkpush", (req, res) => {
           }
         )
         .then((response) => {
-          res.send("😀 Request is successful done ✔✔. Please enter mpesa pin to complete the transaction", response);
+          console.log(response)
+          res.send("😀 Request is successful done ✔✔. Please enter mpesa pin to complete the transaction");
         })
         .catch((error) => {
           console.log(error);
@@ -114,8 +115,8 @@ app.get("/registerurl", (req, resp) => {
           {
             ShortCode: process.env.DARAJA_SHORTCODE,
             ResponseType: "Complete",
-            ConfirmationURL: "http://example.com/confirmation",
-            ValidationURL: "http://example.com/validation",
+            ConfirmationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com/confirmation",
+            ValidationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com/validation",
           },
           {
             headers: {
