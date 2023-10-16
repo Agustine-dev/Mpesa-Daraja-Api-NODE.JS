@@ -43,7 +43,7 @@ async function getAccessToken() {
 app.get("/", (req, res) => {
   res.send("MPESA DARAJA API");
   var timeStamp = moment().format("YYYYMMDDHHmmss");
-  console.log(timeStamp);
+  console.log("This is a timestamp",timeStamp);
 });
 
 //ACCESS TOKEN ROUTE
@@ -64,7 +64,7 @@ app.get("/stkpush", (req, res) => {
       const auth = "Bearer " + accessToken;
       const timestamp = moment().format("YYYYMMDDHHmmss");
       const password = new Buffer.from(
-        "174379" +
+        "4062753" +
           "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919" +
           timestamp
       ).toString("base64");
@@ -73,15 +73,15 @@ app.get("/stkpush", (req, res) => {
         .post(
           url,
           {
-            BusinessShortCode: "174379",
+            BusinessShortCode: process.env.DARAJA_SHORTCODE,
             Password: password,
             Timestamp: timestamp,
-            TransactionType: "CustomerPayBillOnline",
+            TransactionType: "CustomerBuyGoodsOnline",
             Amount: "1",
-            PartyA: "254768168060",
-            PartyB: "174379",
-            PhoneNumber: "254768168060",
-            CallBackURL: "https://umeskiasoftwares.com/umswifi/callback",
+            PartyA: "254799273498",
+            PartyB: process.env.DARAJA_SHORTCODE,
+            PhoneNumber: "254799273498",
+            CallBackURL: process.env.DARAJA_CALLBACK_URI,
             AccountReference: "UMESKIA PAY",
             TransactionDesc: "Mpesa Daraja API stk push test",
           },
@@ -92,7 +92,7 @@ app.get("/stkpush", (req, res) => {
           }
         )
         .then((response) => {
-          res.send("😀 Request is successful done ✔✔. Please enter mpesa pin to complete the transaction");
+          res.send("😀 Request is successful done ✔✔. Please enter mpesa pin to complete the transaction", response);
         })
         .catch((error) => {
           console.log(error);
@@ -112,7 +112,7 @@ app.get("/registerurl", (req, resp) => {
         .post(
           url,
           {
-            ShortCode: "174379",
+            ShortCode: process.env.DARAJA_SHORTCODE,
             ResponseType: "Complete",
             ConfirmationURL: "http://example.com/confirmation",
             ValidationURL: "http://example.com/validation",
@@ -159,8 +159,8 @@ app.get("/b2curlrequest", (req, res) => {
             SecurityCredential: securityCredential,
             CommandID: "PromotionPayment",
             Amount: "1",
-            PartyA: "600996",
-            PartyB: "254768168060",
+            PartyA: "4062753",
+            PartyB: "254799273498",
             Remarks: "Withdrawal",
             QueueTimeOutURL: "https://mydomain.com/b2c/queue",
             ResultURL: "https://mydomain.com/b2c/result",
