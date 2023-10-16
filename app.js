@@ -71,7 +71,7 @@ app.get("/stkpush", (req, res) => {
       const timestamp = moment().format("YYYYMMDDHHmmss");
       const password = new Buffer.from(
         "4062753" +
-          "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919" +
+          process.env.DARAJA_PASS_KEY +
           timestamp
       ).toString("base64");
 
@@ -126,8 +126,8 @@ app.get("/registerurl", (req, resp) => {
           {
             ShortCode: "4062753",
             ResponseType: "Complete",
-            ConfirmationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com",
-            ValidationURL: "https://2xk2z91zs6.execute-api.us-west-2.amazonaws.com",
+            ConfirmationURL: "https://o4xzmlvsb0.execute-api.us-west-2.amazonaws.com",
+            ValidationURL: "https://o4xzmlvsb0.execute-api.us-west-2.amazonaws.com",
           },
           {
             headers: {
