@@ -19,8 +19,8 @@ const server = http.createServer(app);
 
 // ACCESS TOKEN FUNCTION - Updated to use 'axios'
 async function getAccessToken() {
-  const consumer_key = ""; // REPLACE IT WITH YOUR CONSUMER KEY
-  const consumer_secret = ""; // REPLACE IT WITH YOUR CONSUMER SECRET
+  const consumer_key = process.env.DARAJA_KEY; // REPLACE IT WITH YOUR CONSUMER KEY
+  const consumer_secret = process.env.DARAJA_SECRET; // REPLACE IT WITH YOUR CONSUMER SECRET
   const url =
     "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
 
@@ -42,7 +42,7 @@ async function getAccessToken() {
 }
 
 app.get("/", (req, res) => {
-  res.send("MPESA DARAJA API WITH NODE JS BY UMESKIA SOFTWARES");
+  res.send("MPESA DARAJA API");
   var timeStamp = moment().format("YYYYMMDDHHmmss");
   console.log(timeStamp);
 });
@@ -149,8 +149,7 @@ app.get("/validation", (req, resp) => {
 app.get("/b2curlrequest", (req, res) => {
   getAccessToken()
     .then((accessToken) => {
-      const securityCredential =
-        "N3Lx/hisedzPLxhDMDx80IcioaSO7eaFuMC52Uts4ixvQ/Fhg5LFVWJ3FhamKur/bmbFDHiUJ2KwqVeOlSClDK4nCbRIfrqJ+jQZsWqrXcMd0o3B2ehRIBxExNL9rqouKUKuYyKtTEEKggWPgg81oPhxQ8qTSDMROLoDhiVCKR6y77lnHZ0NU83KRU4xNPy0hRcGsITxzRWPz3Ag+qu/j7SVQ0s3FM5KqHdN2UnqJjX7c0rHhGZGsNuqqQFnoHrshp34ac/u/bWmrApUwL3sdP7rOrb0nWasP7wRSCP6mAmWAJ43qWeeocqrz68TlPDIlkPYAT5d9QlHJbHHKsa1NA==";
+      const securityCredential = process.env.SECURITY_CRED
       const url = "https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest";
       const auth = "Bearer " + accessToken;
       axios

@@ -19,8 +19,8 @@ router.get("/api/access_token", (req, res) => {
 });
 
 async function getAccessToken() {
-  const consumer_key = ""; // REPLACE IT WITH YOUR CONSUMER KEY
-  const consumer_secret = ""; // REPLACE IT WITH YOUR CONSUMER SECRET
+  const consumer_key = process.env.DARAJA_KEY; // REPLACE IT WITH YOUR CONSUMER KEY
+  const consumer_secret = process.env.DARAJA_SECRET; // REPLACE IT WITH YOUR CONSUMER SECRET
   const url =
     "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials";
 
