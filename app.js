@@ -52,7 +52,10 @@ app.get("/access_token", (req, res) => {
     .then((accessToken) => {
       res.send("😀 Your access token is " + accessToken);
     })
-    .catch(console.log);
+    .catch((err) => {
+      console.log(err)
+      res.status(500).json(err);
+    })
 });
 
 //MPESA STK PUSH ROUTE
@@ -97,7 +100,7 @@ app.get("/stkpush", (req, res) => {
         })
         .catch((error) => {
           console.log(error);
-          res.status(500).send("❌ Request failed");
+          res.status(500).send("❌ Request failed", error);
         });
     })
     .catch(console.log);
@@ -137,6 +140,7 @@ app.get("/registerurl", (req, resp) => {
 
 app.get("/confirmation", (req, res) => {
   console.log("All transaction will be sent to this URL");
+  res.send()
   console.log(req.body);
 });
 
