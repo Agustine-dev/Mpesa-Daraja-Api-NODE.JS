@@ -65,25 +65,20 @@ app.get("/access_token", (req, res) => {
 app.get("/stkpush", (req, res) => {
   getAccessToken()
     .then((accessToken) => {
-      const url =
-        "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+      const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
       const auth = "Bearer " + accessToken;
-      const timestamp = moment().format("YYYYMMDDHHmmss");
-      const password = new Buffer.from(
+      const password = btoa(
         "4062753" +
           process.env.DARAJA_PASS_KEY +
           timestamp
-      ).toString("base64");
-
-      const shortCode = process.env.DARAJA_SHORTCODE;
-      const callback_uri = process.env.DARAJA_CALLBACK_URI;
+      );
       axios
         .post(
           url,
           {
             BusinessShortCode: "4062753",
             Password: password,
-            Timestamp: timestamp,
+            Timestamp: moment().format("YYYYMMDDHHmmss"),
             TransactionType: "CustomerBuyGoodsOnline",
             Amount: "1",
             PartyA: "254799273498",
@@ -111,7 +106,10 @@ app.get("/stkpush", (req, res) => {
           });
         });
     })
-    .catch(console.log);
+    .catch((err) => {
+      console.error(err)
+      res.status(500).json(err)
+    });
 });
 
 // REGISTER URL FOR C2B
