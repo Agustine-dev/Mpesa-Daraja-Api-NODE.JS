@@ -99,7 +99,7 @@ app.get("/stkpush", (req, res) => {
       };
 
       // Perform the fetch request
-      fetch(apiUrl, requestOptions)
+      fetch(url, requestOptions)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Request failed with status: ${response.status}`);
