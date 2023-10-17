@@ -20,7 +20,8 @@
     "fs": "^0.0.1-security",
     "moment": "^2.29.4",
     "dotenv": "latest",
-    "node-fetch": "latest"
+    "node-fetch": "latest",
+    "moment-timezone": "latest"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

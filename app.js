@@ -44,7 +44,7 @@ async function getAccessToken() {
 }
 
 app.get("/", (req, res) => {
-  var timeStamp = moment().format("YYYYMMDDHHmmss");
+  var timeStamp = moment().tz('Africa/Nairobi').format("YYYYMMDDHHmmss");
   console.log("This is a timestamp",timeStamp);
    res.json({
      message: "An Mpesa API",
