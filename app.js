@@ -67,11 +67,10 @@ app.get("/stkpush", (req, res) => {
     .then((accessToken) => {
       const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
       const auth = "Bearer " + accessToken;
-      const password = 
-        process.env.DARAJA_SHORTCODE +
-          process.env.DARAJA_PASS_KEY +
-          moment().format("YYYYMMDDHHmmss")
-      ;
+      const password = new Buffer.from(process.env.DARAJA_SHORTCODE +
+      process.env.DARAJA_PASS_KEY +
+      moment().format("YYYYMMDDHHmmss")).toString("base64")
+
       axios
         .post(
           url,
@@ -107,8 +106,11 @@ app.get("/stkpush", (req, res) => {
         });
     })
     .catch((err) => {
-      console.error(err)
-      res.status(500).json(err)
+      res.status(500).json(
+        {
+          error: err
+        }
+      )
     });
 });
 
@@ -141,7 +143,6 @@ app.get("/registerurl", (req, resp) => {
           resp.status(200).json(response.data);
         })
         .catch((error) => {
-          console.log(error);
           resp.status(500).json({
             message: "❌ Request failed",
             error:  error
