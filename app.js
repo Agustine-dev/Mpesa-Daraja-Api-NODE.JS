@@ -3,12 +3,14 @@ const app = express();
 const http = require("http");
 const bodyParser = require("body-parser");
 const axios = require("axios"); // Import 'axios' instead of 'request'
-const apiRouter = require('./api');
+const apiRouter = require("./api");
 const cors = require("cors");
-const moment = require('moment-timezone');
+const moment = require("moment-timezone");
+const fetch = require("node-fetch");
 
 const port = 5000;
 const hostname = "localhost";
+app.use(express.json())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
@@ -40,12 +42,12 @@ async function getAccessToken() {
 }
 
 app.get("/", (req, res) => {
-  var timeStamp = moment().tz('Africa/Nairobi').format("YYYYMMDDHHmmss");
-  console.log("This is a timestamp",timeStamp);
-   res.json({
-     message: "An Mpesa API",
-     timestamp: timeStamp
-   });
+  var timeStamp = moment().tz("Africa/Nairobi").format("YYYYMMDDHHmmss");
+  console.log("This is a timestamp", timeStamp);
+  res.json({
+    message: "An Mpesa API",
+    timestamp: timeStamp,
+  });
 });
 
 //ACCESS TOKEN ROUTE
@@ -55,67 +57,77 @@ app.get("/access_token", (req, res) => {
       res.send("😀 Your access token is " + accessToken);
     })
     .catch((err) => {
-      console.log(err)
+      console.log(err);
       res.status(500).json(err);
-    })
+    });
 });
 
 //MPESA STK PUSH ROUTE
 app.get("/stkpush", (req, res) => {
   getAccessToken()
     .then((accessToken) => {
-      const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
+      const url =
+        "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
       const auth = "Bearer " + accessToken;
-      const timestamp = moment().tz('Africa/Nairobi').format("YYYYMMDDHHmmss");
-      const password = encodeURIComponent(process.env.DARAJA_SHORTCODE +
-      process.env.DARAJA_PASS_KEY + timestamp)
+      const timestamp = moment().tz("Africa/Nairobi").format("YYYYMMDDHHmmss");
+      const password = new Buffer.from(
+        process.env.DARAJA_SHORTCODE + process.env.DARAJA_PASS_KEY + timestamp
+      ).toString("base64");
 
-      axios
-        .post(
-          url,
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": auth,
+          Accept: "application/json"
+        },
+        body: JSON.stringify(
           {
-            BusinessShortCode: process.env.DARAJA_SHORTCODE,
-            Password: password,
-            Timestamp: timestamp,
-            TransactionType: "CustomerPayBillOnline",
-            Amount: "1",
-            PartyA: "254799273498",
-            PartyB: process.env.DARAJA_SHORTCODE,
-            PhoneNumber: "254799273498",
-            CallBackURL: process.env.DARAJA_CALLBACK_URI,
-            AccountReference: "UMESKIA PAY",
-            TransactionDesc: "Mpesa Daraja API stk push test",
-          },
-          {
-            headers: {
-              Authorization: auth,
-            },
-          }
+            "BusinessShortCode": process.env.DARAJA_SHORTCODE,
+            "Password": password,
+            "Timestamp": timestamp,
+            "TransactionType": "CustomerPayBillOnline",
+            "Amount": "1",
+            "PartyA": "254799273498",
+            "PartyB": process.env.DARAJA_SHORTCODE,
+            "PhoneNumber": "0799273498",
+            "CallBackURL": "https://daraja-next.vercel.app/callback",
+            "AccountReference": "NET",
+            "TransactionDesc": "Test"
+        }
         )
+      };
+
+      // Perform the fetch request
+      fetch(apiUrl, requestOptions)
         .then((response) => {
-          console.log(response)
-          res.send("😀 Request is successful done ✔✔. Please enter mpesa pin to complete the transaction" + response);
+          if (!response.ok) {
+            throw new Error(`Request failed with status: ${response.status}`);
+          }
+          return response.json(); // Parse the response as JSON
+        })
+        .then((data) => {
+          // Handle the JSON response data
+          console.log(data);
+          res.status(201).json(data)
         })
         .catch((error) => {
-          console.log(error);
           res.status(500).json({
-            message: "❌ Request failed",
-            error: error
-          });
+            Error: error
+          })
+          console.error("Fetch error:", error);
         });
     })
     .catch((err) => {
-      res.status(500).json(
-        {
-          error: err
-        }
-      )
+      res.status(500).json({
+        error: err.message
+      });
     });
 });
 
-app.post('/callback', (req, res, next) => {
-  console.log("This is res", res)
-})
+app.post("/callback", (req, res, next) => {
+  console.log("This is res", res);
+});
 
 // REGISTER URL FOR C2B
 app.get("/registerurl", (req, resp) => {
@@ -144,7 +156,7 @@ app.get("/registerurl", (req, resp) => {
         .catch((error) => {
           resp.status(500).json({
             message: "❌ Request failed",
-            error:  error
+            error: error,
           });
         });
     })
@@ -154,16 +166,16 @@ app.get("/registerurl", (req, resp) => {
 app.get("/confirmation", (req, res) => {
   console.log("All transaction will be sent to this URL");
   res.json({
-    message: "Confirmed URI"
-  })
+    message: "Confirmed URI",
+  });
   console.log(req.body);
 });
 
 app.get("/validation", (req, resp) => {
   console.log("Validating payment");
-    resp.json({
-    message: "Validated URI"
-  })
+  resp.json({
+    message: "Validated URI",
+  });
   console.log(req.body);
 });
 
@@ -171,7 +183,7 @@ app.get("/validation", (req, resp) => {
 app.get("/b2curlrequest", (req, res) => {
   getAccessToken()
     .then((accessToken) => {
-      const securityCredential = process.env.SECURITY_CRED
+      const securityCredential = process.env.SECURITY_CRED;
       const url = "https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest";
       const auth = "Bearer " + accessToken;
       axios
@@ -206,8 +218,8 @@ app.get("/b2curlrequest", (req, res) => {
     .catch((err) => {
       res.status(500).json({
         message: "An Error Occurred while fetching Access Token",
-        error: err
-      })
+        error: err,
+      });
     });
 });
 
