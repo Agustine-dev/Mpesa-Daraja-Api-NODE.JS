@@ -6,7 +6,6 @@ const axios = require("axios"); // Import 'axios' instead of 'request'
 const apiRouter = require("./api");
 const cors = require("cors");
 const moment = require("moment-timezone");
-const fetch = require("node-fetch");
 
 const port = 5000;
 const hostname = "localhost";
@@ -63,7 +62,7 @@ app.get("/access_token", (req, res) => {
 });
 
 //MPESA STK PUSH ROUTE
-app.get("/stkpush", (req, res) => {
+app.get("/stkpush", async (req, res) => {
   getAccessToken()
     .then((accessToken) => {
       const url =
@@ -99,7 +98,7 @@ app.get("/stkpush", (req, res) => {
       };
 
       // Perform the fetch request
-      fetch(url, requestOptions)
+      await fetch(url, requestOptions)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Request failed with status: ${response.status}`);
