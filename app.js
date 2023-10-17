@@ -76,15 +76,15 @@ app.get("/stkpush", (req, res) => {
         .post(
           url,
           {
-            BusinessShortCode: "4062753",
+            BusinessShortCode: process.env.DARAJA_SHORTCODE,
             Password: password,
             Timestamp: moment().format("YYYYMMDDHHmmss"),
-            TransactionType: "CustomerBuyGoodsOnline",
+            TransactionType: "CustomerPayBillOnline",
             Amount: "1",
             PartyA: "254799273498",
-            PartyB: shortCode,
+            PartyB: process.env.DARAJA_SHORTCODE,
             PhoneNumber: "254799273498",
-            CallBackURL: callback_uri,
+            CallBackURL: "https://test.com/callback",
             AccountReference: "UMESKIA PAY",
             TransactionDesc: "Mpesa Daraja API stk push test",
           },
@@ -122,10 +122,10 @@ app.get("/registerurl", (req, resp) => {
         .post(
           url,
           {
-            ShortCode: "4062753",
+            ShortCode: process.env.DARAJA_SHORTCODE,
             ResponseType: "Complete",
-            ConfirmationURL: "https://o4xzmlvsb0.execute-api.us-west-2.amazonaws.com",
-            ValidationURL: "https://o4xzmlvsb0.execute-api.us-west-2.amazonaws.com",
+            ConfirmationURL: "https://daraja-test.vercel.app",
+            ValidationURL: "https://daraja-test.vercel.app",
           },
           {
             headers: {
@@ -199,7 +199,12 @@ app.get("/b2curlrequest", (req, res) => {
           res.status(500).send("❌ Request failed" + error);
         });
     })
-    .catch(console.log);
+    .catch((err) => {
+      res.status(500).json({
+        message: "An Error Occurred while fetching Access Token",
+        error: err
+      })
+    });
 });
 
 server.listen(port, hostname, () => {
