@@ -6,6 +6,9 @@ const axios = require("axios"); // Import 'axios' instead of 'request'
 const moment = require("moment");
 const apiRouter = require('./api');
 const cors = require("cors");
+const moment = require('moment-timezone');
+
+
 
 
 const port = 5000;
@@ -67,9 +70,9 @@ app.get("/stkpush", (req, res) => {
     .then((accessToken) => {
       const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
       const auth = "Bearer " + accessToken;
+      const timestamp = moment().tz('Africa/Nairobi').format("YYYYMMDDHHmmss");
       const password = new Buffer.from(process.env.DARAJA_SHORTCODE +
-      process.env.DARAJA_PASS_KEY +
-      moment().format("YYYYMMDDHHmmss")).toString("base64")
+      process.env.DARAJA_PASS_KEY + timestamp).toString("base64")
 
       axios
         .post(
@@ -77,7 +80,7 @@ app.get("/stkpush", (req, res) => {
           {
             BusinessShortCode: process.env.DARAJA_SHORTCODE,
             Password: password,
-            Timestamp: moment().format("YYYYMMDDHHmmss"),
+            Timestamp: timestamp,
             TransactionType: "CustomerPayBillOnline",
             Amount: "1",
             PartyA: "254799273498",
