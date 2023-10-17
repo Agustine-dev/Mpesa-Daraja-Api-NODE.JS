@@ -67,11 +67,11 @@ app.get("/stkpush", (req, res) => {
     .then((accessToken) => {
       const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
       const auth = "Bearer " + accessToken;
-      const password = btoa(
+      const password = 
         process.env.DARAJA_SHORTCODE +
           process.env.DARAJA_PASS_KEY +
           moment().format("YYYYMMDDHHmmss")
-      );
+      ;
       axios
         .post(
           url,
