@@ -84,7 +84,7 @@ app.get("/stkpush", (req, res) => {
             PartyA: "254799273498",
             PartyB: process.env.DARAJA_SHORTCODE,
             PhoneNumber: "254799273498",
-            CallBackURL: "https://test.com/callback",
+            CallBackURL: process.env.DARAJA_CALLBACK_URI,
             AccountReference: "UMESKIA PAY",
             TransactionDesc: "Mpesa Daraja API stk push test",
           },
@@ -112,6 +112,10 @@ app.get("/stkpush", (req, res) => {
     });
 });
 
+app.post('/callback', (req, res, next) => {
+  console.log("This is res", res)
+})
+
 // REGISTER URL FOR C2B
 app.get("/registerurl", (req, resp) => {
   getAccessToken()
@@ -124,8 +128,8 @@ app.get("/registerurl", (req, resp) => {
           {
             ShortCode: process.env.DARAJA_SHORTCODE,
             ResponseType: "Complete",
-            ConfirmationURL: "https://daraja-test.vercel.app",
-            ValidationURL: "https://daraja-test.vercel.app",
+            ConfirmationURL: process.env.DARAJA_CONFIRM,
+            ValidationURL: process.env.DARAJA_VALID,
           },
           {
             headers: {
