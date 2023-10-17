@@ -7,9 +7,6 @@ const apiRouter = require('./api');
 const cors = require("cors");
 const moment = require('moment-timezone');
 
-
-
-
 const port = 5000;
 const hostname = "localhost";
 app.use(bodyParser.json());
@@ -70,7 +67,7 @@ app.get("/stkpush", (req, res) => {
       const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
       const auth = "Bearer " + accessToken;
       const timestamp = moment().tz('Africa/Nairobi').format("YYYYMMDDHHmmss");
-      const password = btoa(process.env.DARAJA_SHORTCODE +
+      const password = encodeURIComponent(process.env.DARAJA_SHORTCODE +
       process.env.DARAJA_PASS_KEY + timestamp)
 
       axios
